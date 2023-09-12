@@ -1,12 +1,12 @@
 import React from "react";
 import Products from "../pages/Products/Products";
-
 import Home from "../pages/home/Home";
 import NewProduct from "../pages/Products/NewProduct";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { prductsInputs, productsUpdate } from "../formSource";
 import UpdateProduct from "../pages/Products/UpdateProdcut";
 import Categories from "../pages/Categories/Categories";
+import CoreSettings from "../pages/Settings/CoreSettings.jsx";
 import Users from "../pages/Users/Users";
 import UpdateUsers from "../pages/Users/UpdateUsers";
 import Orders from "../pages/NewOrders/Orders";
@@ -24,6 +24,10 @@ function Adminroutes() {
 
             <Route path="categories">
               <Route index element={<Categories />} />
+            </Route>
+
+            <Route path="core-settings">
+              <Route index element={<CoreSettings />} />
             </Route>
 
             <Route path="products">

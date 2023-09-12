@@ -29,11 +29,12 @@ export const categoryColumns = [
 // users
 // columns heading
 export const userColumns = [
-  { field: "userId", headerName: "ID", width: 150 },
-  { field: "name", headerName: "User Name", width: 150 },
+  { field: "_id", headerName: "ID", width: 120 },
+  { field: "firstname", headerName: "User Name", width: 150 },
   { field: "email", headerName: "Email", width: 200 },
   { field: "phoneNo", headerName: "Phone No.", width: 180 },
-  { field: "address", headerName: "Address", width: 200 },
+  { field: "countryLivingIn", headerName: "Country", width: 100 },
+  { field: "city", headerName: "City", width: 100 },
 ];
 
 // orders
@@ -42,4 +43,11 @@ export const orderColumns = [
   { field: "orderId", headerName: "OrderID", width: 150 },
   { field: "userId", headerName: "UserID", width: 200 },
   { field: "lotteryCode", headerName: "Lottery Code", width: 200 },
+];
+
+
+export const coreSettings = [
+  // { field: "name", headerName: "Name", width: 200 },
+  { field: "name", headerName: "Name", width: 200 },
+  { field: "urlName", headerName: "URL", width: 200 },
 ];

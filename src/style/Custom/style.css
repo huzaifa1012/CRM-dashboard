@@ -1,0 +1,68 @@
+.mt {
+    margin-top: 5px;
+}
+
+.mb {
+    margin-bottom: 5px;
+}
+
+.mtb {
+    margin: 5px 0px;
+}
+
+.right_mine {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 50%;
+    padding: 10px;
+
+}
+
+.left_mine {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 10px;
+}
+
+.datatableTitleWrap {
+    display: flex;
+}
+
+.delete_btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    min-width: fit-content;
+    border: none;
+    border-radius: 10px;
+    width: auto;
+    margin-bottom: 5px;
+}
+
+.add_btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: #00B894;
+    min-width: fit-content;
+    border: none;
+    border-radius: 10px;
+    width: auto;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+}
+
+.delete_btn:hover {
+    border: none;
+    color: red;
+
+}

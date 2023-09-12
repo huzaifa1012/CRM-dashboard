@@ -5,16 +5,18 @@ import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PopupAlert from "../../components/popupalert/popupAlert";
-
+import Swal from "sweetalert2";
+import { MdDelete } from 'react-icons/md';
 const DatatableUsers = () => {
   const [users, setUsers] = useState([]);
   const [popUpShow, setPopupshow] = useState(false);
   const [popUpText, setPopupText] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
 
-  useEffect(() => {
+
+  const FetchStudents = async () => {
     axios
-      .get("http://localhost:5000/users")
+      .get("https://studyapi.ieodkv.com/students")
       .then((response) => {
         if (response.data.length > 0) {
           setUsers(response.data);
@@ -23,33 +25,77 @@ const DatatableUsers = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }
 
+  useEffect(() => {
+
+    FetchStudents()
+    console.log(users)
+  }, [selectedRows, 0]);
+
+  const askHandleDelete = (userId) => (
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDelete(userId)
+      }
+    })
+  )
   const handleDelete = (id) => {
-    axios.delete("http://localhost:5000/users/" + id).then((response) => {
+    axios.delete("https://studyapi.ieodkv.com/students/" + id).then((response) => {
       console.log(response.data);
     });
 
     setUsers(users.filter((el) => el._id !== id));
     setPopupshow(true);
-    setPopupText("Category Deleted");
+    setPopupText("User Deleted");
     setTimeout(() => {
       setPopupshow(false);
     }, 2000);
   };
 
-  const handleDeleteSelectedRows = () => {
+  const askHandleDeleteSelectedRows = () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        HandleDeleteSelectedRows()
+      }
+    })
+  }
+  const HandleDeleteSelectedRows = async () => {
     selectedRows.forEach((row) => {
-      axios.delete("http://localhost:5000/users/" + row).then((response) => {
+      axios.delete("https://studyapi.ieodkv.com/students/" + row).then((response) => {
         setUsers(response.data);
         setPopupshow(true);
         setPopupText(`${selectedRows.length} Users Deleted`);
+        if (response.status === 200) {
+          Swal.fire(
+            'Deleted!',
+            'Your file has been deleted.',
+            'success'
+          )
+        }
       });
     });
     setTimeout(() => {
       setPopupshow(false);
     }, 2000);
     setSelectedRows([]);
+    FetchStudents()
   };
 
   const actionColumn = [
@@ -67,7 +113,7 @@ const DatatableUsers = () => {
             </Link>
             <div
               className="deleteButton"
-              onClick={() => handleDelete(params.row._id)}>
+              onClick={() => askHandleDelete(params.row._id)}>
               Delete
             </div>
           </div>
@@ -77,15 +123,20 @@ const DatatableUsers = () => {
   ];
   return (
     <div className="datatable">
-      <div className="datatableTitle">Users</div>
-      {selectedRows.length > 0 ? (
-        <button
-          onClick={() => {
-            handleDeleteSelectedRows();
-          }}>
-          Delete Selected Rows
-        </button>
-      ) : null}
+      <div className="datatableTitleWrap">
+
+        <div className="datatableTitle">Users</div>
+        {selectedRows.length > 0 ? (
+          <button
+            className="delete_btn"
+            onClick={() => {
+              askHandleDeleteSelectedRows();
+            }}>
+            <MdDelete size={24} /> Delete Selected Rows
+          </button>
+        ) : null}
+      </div>
+
       {popUpShow ? (
         <div className="Popupmodal">
           <div
@@ -93,10 +144,10 @@ const DatatableUsers = () => {
             style={
               popUpShow && popUpText === "Category Added"
                 ? {
-                    backgroundColor: "#8AFF8A",
-                    borderWidth: 1,
-                    borderColor: "#007500",
-                  }
+                  backgroundColor: "#8AFF8A",
+                  borderWidth: 1,
+                  borderColor: "#007500",
+                }
                 : { backgroundColor: "red", borderWidth: 1, borderColor: "red" }
             }>
             <PopupAlert popUpText={popUpText} />
