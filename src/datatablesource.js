@@ -51,3 +51,16 @@ export const coreSettings = [
   { field: "name", headerName: "Name", width: 200 },
   { field: "urlName", headerName: "URL", width: 200 },
 ];
+
+export const applicationColumns = [
+  {
+    field: "studentIdName", headerName: "Student Name", width: 200, valueGetter: (params) => params.row.studentId.firstname + " " + params.row.studentId.lastname,
+  },
+  {
+    field: "studentId", headerName: "Gender", width: 70, valueGetter: (params) => params.row.studentId.gender
+  },
+  { field: "_id", headerName: "ID", width: 200 },
+  { field: "programId", headerName: "Program", width: 200, valueGetter: (params) => params.row.programId.name },
+];
+
+

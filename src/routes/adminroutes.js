@@ -12,6 +12,7 @@ import UpdateUsers from "../pages/Users/UpdateUsers";
 import Orders from "../pages/NewOrders/Orders";
 import OrderHistory from "../pages/OrderHistory/OrderHistory";
 import Login from "../pages/Login/Login";
+import Applications from "../pages/Applications/Applicaiton";
 
 function Adminroutes() {
   return (
@@ -28,6 +29,10 @@ function Adminroutes() {
 
             <Route path="core-settings">
               <Route index element={<CoreSettings />} />
+            </Route>
+
+            <Route path="/applications">
+              <Route index element={<Applications />} />
             </Route>
 
             <Route path="products">
