@@ -30,7 +30,6 @@ const DatatableUsers = () => {
   useEffect(() => {
 
     FetchStudents()
-    console.log(users)
   }, [selectedRows, 0]);
 
   const askHandleDelete = (userId) => (

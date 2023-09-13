@@ -1,4 +1,5 @@
 import React from "react";
+import "./style/app.css"
 import AdminDashboard from "./AdminDashboard";
 function App() {
   return (
