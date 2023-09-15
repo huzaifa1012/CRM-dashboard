@@ -9,65 +9,54 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const response = axios.post('')
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
 
-    navigate("/dashboard");
+      const response = await axios.post('https://studyapi.ieodkv.com/members/login', {
+        email: email,
+        password: password
+      })
+      console.log(response.data)
+      if (response.status === 200) {
+        let token = response.data.token
+        localStorage.setItem('token', token)
+        navigate("/dashboard");
+
+      }
+    } catch (error) {
+      console.log(error)
+      if (error.response.data) {
+        console.log(error.response.data)
+        setErrorMessage(error.response.data)
+      }
+    }
   };
-
-  // JSX code for login form
-  // const renderForm = (
-  //   <div className="form">
-  //     <form onSubmit={handleSubmit}>
-  //       <div className="input-container">
-  //         <div style={{ color: "red", fontSize: 15 }}>{errorMessage}</div>
-
-  //         <label>Username </label>
-  //         <input
-  //           type="text"
-  //           value={username}
-  //           onChange={(e) => setUsername(e.target.value)}
-  //           required
-  //         />
-  //       </div>
-  //       <div className="input-container">
-  //         <label>Password </label>
-  //         <input
-  //           type="password"
-  //           value={password}
-  //           onChange={(e) => setPassword(e.target.value)}
-  //           required
-  //         />
-  //       </div>
-  //       <div className="button-container">
-  //         <input type="submit" />
-  //       </div>
-  //     </form>
-  //   </div>
-  // );
 
   return (
     <>
-      <section className="bg-gray-50 dark:bg-gray-900">
+      {/* dark:bg-gray-900 */}
+      <section className="bg-gray-50 
+      ">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <a
             href="#"
             className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
           >
             <img
-              className="w-8 h-8 mr-2"
-              src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+              className="w-35 h-14 mr-5"
+              src="https://study.internationaleducationoffice.co.uk/assets/IEO-b62794c8.png"
               alt="logo"
             />
-            Flowbite
+            {/* Flowbite */}
           </a>
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Sign in to your account
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <p className="text-red-500">{errorMessage}</p>
+              <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <label
                     htmlFor="email"
@@ -131,7 +120,6 @@ const Login = () => {
                 </div>
                 <button
                   type="submit"
-                  onSubmit={handleSubmit}
                   className="w-full text-white bg-primary hover:bg-gray-900 transition duration-300 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
                   Sign in

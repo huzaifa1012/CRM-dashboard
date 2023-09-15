@@ -19,14 +19,15 @@ const DatatableApplications = () => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [Open, setModalOpen] = useState(false)
     const [coreName, setCoreName] = useState(false)
-    const [AllApplication, setAllApplication] = useState(false)
+    const [Assigned, setAssigned] = useState(false)
+    const [agents, setAgents] = useState([])
     const cancelButtonRef = useRef(null)
 
 
 
 
     const handleCheckboxChange = () => {
-        setAllApplication(!AllApplication)
+        setAssigned(!Assigned)
     }
 
     const Switcher13 = () => {
@@ -35,23 +36,23 @@ const DatatableApplications = () => {
                 <label className='themeSwitcherThree relative inline-flex   mb-1 cursor-pointer select-none items-center'>
                     <input
                         type='checkbox'
-                        checked={AllApplication}
+                        checked={Assigned}
                         onChange={handleCheckboxChange}
                         className='sr-only'
                     />
 
-                    <div className='shadow-card flex  w-[192px] items-center justify-center rounded-md bg-white'>
+                    <div className='shadow-card flex  w-[192px] items-center justify-center rounded-md bg-white mr-5'>
                         <span
-                            className={`flex h-9 p-5  items-center justify-center rounded ${!AllApplication ? 'bg-primary text-white' : 'text-body-color'
+                            className={`flex h-9 p-5  items-center justify-center rounded ${!Assigned ? 'bg-primary text-white' : 'text-body-color'
                                 }`}
                         >
                             Unassigned
                         </span>
                         <span
-                            className={`flex h-9 w-9 p-5  items-center justify-center rounded ${AllApplication ? 'bg-primary text-white' : 'text-body-color'
+                            className={`flex h-9  p-5  items-center justify-center rounded ${Assigned ? 'bg-primary text-white' : 'text-body-color'
                                 }`}
                         >
-                            All
+                            Assigned
                         </span>
                     </div>
                 </label>
@@ -61,7 +62,7 @@ const DatatableApplications = () => {
 
     const FetchAllApplications = async () => {
         axios
-            .get(`https://studyapi.ieodkv.com/applications/${AllApplication ? 'empty' : ''}`)
+            .get(`https://studyapi.ieodkv.com/applications/${Assigned ? "" : 'empty'}`)
             .then((response) => {
                 if (response.data.length > 0) {
                     setApplicationData(response.data);
@@ -71,9 +72,37 @@ const DatatableApplications = () => {
                 console.log(error);
             });
     }
+    const FetchAllAgentMembers = async () => {
+        axios
+            .get(`https://studyapi.ieodkv.com/members/staff`)
+            .then((response) => {
+                if (response.data.length > 0) {
+                    setAgents(response.data);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+    const AssignApplication = async (applicationId, agentId) => {
+        axios
+            .patch(`https://studyapi.ieodkv.com/applications/update_row_table/${applicationId}`, {
+                current_desk: agentId,
+                case_owner: agentId
+            })
+            .then((response) => {
+                console.log("Application Assigned", response.data)
+
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
     useEffect(() => {
+
         FetchAllApplications()
-    }, [selectedRows, AllApplication]);
+        FetchAllAgentMembers()
+    }, [selectedRows, Assigned]);
 
     const askHandleDelete = (userId) => (
         Swal.fire({
@@ -90,18 +119,24 @@ const DatatableApplications = () => {
             }
         })
     )
+
     const handleDelete = (id) => {
-        axios.delete("https://studyapi.ieodkv.com/students/" + id).then((response) => {
+        console.log("Id from handleDelete", id)
+        axios.delete(`https://studyapi.ieodkv.com/applications/${id}`).then((response) => {
             console.log(response.data);
-        });
+        }).catch((e) => {
+            console.log(e)
+
+        })
 
         setApplicationData(applications.filter((el) => el._id !== id));
         setPopupshow(true);
-        setPopupText("User Deleted");
+        setPopupText("Application Deleted");
         setTimeout(() => {
             setPopupshow(false);
         }, 2000);
     };
+
 
     const askHandleDeleteSelectedRows = () => {
         Swal.fire({
@@ -120,7 +155,7 @@ const DatatableApplications = () => {
     }
     const HandleDeleteSelectedRows = async () => {
         selectedRows.forEach((row) => {
-            axios.delete("https://studyapi.ieodkv.com/students/" + row).then((response) => {
+            axios.delete("https://studyapi.ieodkv.com/applications/" + row).then((response) => {
                 setApplicationData(response.data);
                 setPopupshow(true);
                 setPopupText(`${selectedRows.length} applications Deleted`);
@@ -152,24 +187,119 @@ const DatatableApplications = () => {
         }
     }
 
-    const actionColumn = [
-        {
-            field: "action",
-            headerName: "Action",
-            width: 180,
-            renderCell: (params) => {
-                return (
-                    <div className="cellAction">
-                        <Link
-                            to={`/data/${params.id}`}
-                            style={{ textDecoration: "none" }}>
-                            <div className="viewButton">Add Data</div>
-                        </Link>
-                    </div>
-                );
-            },
+    // const actionColumn = [
+    //     {
+    //         field: "action",
+    //         headerName: "Action",
+    //         width: 180,
+    //         renderCell: (params) => {
+    //             return (
+    //                 <div className="cellAction">
+    //                     <div className="relative w-full lg:max-w-sm">
+    //                         <select className="w-full p-2.5 text-gray-500 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600">
+    //                             {agents.map((data, index) => {
+    //                                 return (
+    //                                     <>
+    //                                         <option>Assign Application</option>
+    //                                         <option>{data.username}</option>
+    //                                     </>
+    //                                 )
+    //                             })}
+    //                         </select>
+    //                     </div>
+    //                     {/* <Link
+    //                         to={`/data/${params.id}`}
+    //                         style={{ textDecoration: "none" }}>
+    //                         <div className="viewButton">Add Data</div>
+    //                     </Link> */}
+    //                 </div>
+    //             );
+    //         },
+    //     }
+    // ];
+    const handleRowClick = (rowId) => {
+        console.log(`Row with ID ${rowId} clicked.`);
+        // You can add your custom logic here
+    }
+    const handleSelectAll = () => {
+        if (selectedRows.length === applications.length) {
+            setSelectedRows([]);
+        } else {
+            const allRowIds = applications.map((row) => row._id);
+            setSelectedRows(allRowIds);
         }
-    ];
+    };
+    const CustomTable = ({ data }) => {
+        return (
+            <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                <table className="w-full">
+                    <thead>
+                        <tr className="bg-blue-500 text-white">
+                            <th className="px-4 py-2 text-left">
+                                <input
+                                    type="checkbox"
+                                    onChange={handleSelectAll}
+                                    checked={selectedRows.length === data.length}
+                                />
+                            </th>
+                            <th className="px-4 py-2 text-left">Student Name</th>
+                            <th className="px-4 py-2 text-left">Gender</th>
+                            <th className="px-4 py-2 text-left">ID</th>
+                            <th className="px-4 py-2 text-left">Program</th>
+                            <th className="px-4 py-2 text-left">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data?.map((row, index) => (
+                            <tr key={row._id} onClick={() => handleRowClick(row._id)}>
+
+                                <td className="px-4 py-2 text-left">
+                                    <input
+                                        type="checkbox"
+                                        onChange={() => {
+                                            setSelectedRows((prevSelectedRows) => {
+                                                if (prevSelectedRows.includes(row._id)) {
+                                                    return prevSelectedRows.filter((id) => id !== row._id);
+                                                } else {
+                                                    return [...prevSelectedRows, row._id];
+                                                }
+                                            });
+                                        }}
+                                        checked={selectedRows.includes(row._id)}
+                                    />
+                                </td>
+                                <td className="px-4 py-2 text-left">{row.firstname + " " + row.lastname}</td>
+                                <td className="px-4 py-2 text-left">{row.studentId.gender}</td>
+                                <td className="px-4 py-2 text-left">{row._id}</td>
+                                <td className="px-4 py-2 text-left">{row.programId.name}</td>
+                                <td className="px-4 py-2 text-left">
+                                    <select className="w-full p-2.5 text-gray-500 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600">
+                                        {agents.map((data, index) => {
+                                            return (
+                                                <>
+                                                    <option>Assign Application</option>
+                                                    <option>{data.username}</option>
+                                                </>
+                                            )
+                                        })}
+                                    </select>
+                                    <div className="w-full flex justify-between align-center py-1">
+                                        <button className="bg-primary hover:bg-red-700 text-white  py-1 px-2 rounded">
+                                            View</button>
+                                        <button className="bg-blue-500 hover:bg-blue-700 text-white  py-1 px-2 rounded mx-3 ">Edit</button>
+                                        <button className="bg-red-500 hover:bg-red-700 text-white  py-1 px-2 rounded"
+                                            onClick={() => askHandleDelete(row._id)}>
+                                            Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div >
+
+        );
+    };
 
 
     return (
@@ -291,7 +421,7 @@ const DatatableApplications = () => {
             ) : (
                 ""
             )}
-            <DataGrid
+            {/* <DataGrid
                 className="datagrid"
                 rows={applications}
                 columns={applicationColumns.concat(actionColumn)}
@@ -304,7 +434,9 @@ const DatatableApplications = () => {
                 }}
                 pageSize={9}
                 rowsPerPageOptions={[9]}
-            />
+            /> */
+            }
+            <CustomTable data={applications} />
         </div>
     );
 };
