@@ -8,6 +8,7 @@ import PopupAlert from "../../components/popupalert/popupAlert";
 import Swal from "sweetalert2";
 import { MdDelete } from 'react-icons/md';
 import { HiOutlineViewGridAdd } from 'react-icons/hi';
+import { FaRegNewspaper } from 'react-icons/fa';
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
@@ -18,18 +19,19 @@ const DatatableApplications = () => {
     const [popUpText, setPopupText] = useState("");
     const [selectedRows, setSelectedRows] = useState([]);
     const [Open, setModalOpen] = useState(false)
+    const [viewApplicaiton, setApplicationModal] = useState(false)
     const [coreName, setCoreName] = useState(false)
     const [Assigned, setAssigned] = useState(false)
     const [agents, setAgents] = useState([])
+    const [applicationId, setApplicationID] = useState('')
+    const [agentId, setAgentId] = useState([])
+    const [ApplicationModalData, setApplicationModalData] = useState([])
+
     const cancelButtonRef = useRef(null)
-
-
-
 
     const handleCheckboxChange = () => {
         setAssigned(!Assigned)
     }
-
     const Switcher13 = () => {
         return (
             <>
@@ -59,14 +61,99 @@ const DatatableApplications = () => {
             </>
         )
     }
+    const CustomTable = ({ data }) => {
+        return (
+            <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                <table className="w-full">
+                    <thead>
+                        <tr className="bg-blue-500 text-white">
+                            <th className="px-4 py-2 text-left">
+                                <input
+                                    type="checkbox"
+                                    onChange={handleSelectAll}
+                                    checked={selectedRows.length === data.length}
+                                />
+                            </th>
+                            {Assigned && <th className="px-4 py-2 text-left">Agent Name</th>}
+                            <th className="px-4 py-2 text-left">Student Name</th>
+                            <th className="px-4 py-2 text-left">Gender</th>
+                            <th className="px-4 py-2 text-left">ID</th>
+                            <th className="px-4 py-2 text-left">Program</th>
+                            <th className="px-4 py-2 text-left">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data?.map((row, index) => (
+                            <tr key={row._id} onClick={() => handleRowClick(row)}>
 
+                                <td className="px-4 py-2 text-left">
+                                    <input
+                                        type="checkbox"
+                                        onChange={() => {
+                                            setSelectedRows((prevSelectedRows) => {
+                                                if (prevSelectedRows.includes(row._id)) {
+                                                    return prevSelectedRows.filter((id) => id !== row._id);
+                                                } else {
+                                                    return [...prevSelectedRows, row._id];
+                                                }
+                                            });
+                                        }}
+                                        checked={selectedRows.includes(row._id)}
+                                    />
+                                </td>
+                                {Assigned && <td className="px-4 py-2 text-left">{row.case_owner?.username}</td>}
+                                <td className="px-4 py-2 text-left">{row.firstname + " " + row.lastname}</td>
+                                <td className="px-4 py-2 text-left">{row.studentId.gender}</td>
+                                <td className="px-4 py-2 text-left">{row._id}</td>
+                                <td className="px-4 py-2 text-left">{row.programId.name}</td>
+                                <td className="px-4 py-2 text-left">
+                                    <select
+                                        onChange={(event) => handleAssignApplication(event)}
+                                        className="w-full p-2.5 text-gray-500 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600"
+                                        value="" // Set an empty string as the initial value
+                                    >
+                                        {/* Placeholder option */}
+                                        <option value="" disabled>
+                                            Assign to an agent
+                                        </option>
+
+                                        {/* Map over agents to create options */}
+                                        {agents.map((data, index) => {
+                                            const agentValue = JSON.stringify({ _id: data._id, username: data.username });
+                                            return <option key={index} value={agentValue}>{data.username}</option>;
+                                        })}
+                                    </select>
+
+
+                                    <div className="w-full flex justify-between align-center py-1">
+                                        <button onClick={() => handleViewApplication(row)} className="bg-primary hover:bg-red-700 text-white  py-1 px-2 rounded">
+                                            View</button>
+                                        <button className="bg-blue-500 hover:bg-blue-700 text-white  py-1 px-2 rounded mx-3 ">Edit</button>
+                                        <button className="bg-red-500 hover:bg-red-700 text-white  py-1 px-2 rounded"
+                                            onClick={() => askHandleDelete(row._id)}>
+                                            Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div >
+
+        );
+    };
+    useEffect(() => {
+        FetchAllApplications()
+        FetchAllAgentMembers()
+    }, [selectedRows, Assigned]);
     const FetchAllApplications = async () => {
         axios
             .get(`https://studyapi.ieodkv.com/applications/${Assigned ? "" : 'empty'}`)
             .then((response) => {
-                if (response.data.length > 0) {
+                if (response.data) {
                     setApplicationData(response.data);
                 }
+                console.log("All Application", response.data)
             })
             .catch((error) => {
                 console.log(error);
@@ -84,26 +171,6 @@ const DatatableApplications = () => {
                 console.log(error);
             });
     }
-    const AssignApplication = async (applicationId, agentId) => {
-        axios
-            .patch(`https://studyapi.ieodkv.com/applications/update_row_table/${applicationId}`, {
-                current_desk: agentId,
-                case_owner: agentId
-            })
-            .then((response) => {
-                console.log("Application Assigned", response.data)
-
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-    useEffect(() => {
-
-        FetchAllApplications()
-        FetchAllAgentMembers()
-    }, [selectedRows, Assigned]);
-
     const askHandleDelete = (userId) => (
         Swal.fire({
             title: 'Are you sure?',
@@ -119,7 +186,6 @@ const DatatableApplications = () => {
             }
         })
     )
-
     const handleDelete = (id) => {
         console.log("Id from handleDelete", id)
         axios.delete(`https://studyapi.ieodkv.com/applications/${id}`).then((response) => {
@@ -136,8 +202,6 @@ const DatatableApplications = () => {
             setPopupshow(false);
         }, 2000);
     };
-
-
     const askHandleDeleteSelectedRows = () => {
         Swal.fire({
             title: 'Are you sure?',
@@ -150,6 +214,7 @@ const DatatableApplications = () => {
         }).then((result) => {
             if (result.isConfirmed) {
                 HandleDeleteSelectedRows()
+                FetchAllApplications()
             }
         })
     }
@@ -186,6 +251,53 @@ const DatatableApplications = () => {
             console.log(error)
         }
     }
+    const handleAssignApplication = async (event, agentId) => {
+        try {
+
+            const selectedAgentFromList = JSON.parse(event.target.value);
+            const agentId = selectedAgentFromList._id
+
+            console.log("Agent ID", agentId)
+            setAgentId(selectedAgentFromList._id)
+            // console.log("SelectedAgent", selectedAgentFromList,)
+            // console.log("SelectedApplication", applicationId,)
+            const message = `You wanna assign the <span class="font-bold">${applicationId.firstname}</span> application to the agent <span class="font-bold">${selectedAgentFromList.username}</span>!`;
+
+            // In your JSX component, use dangerouslySetInnerHTML to render the message with HTML
+
+            Swal.fire({
+                title: 'Are you sure?',
+                html: `You wanna assign the ${applicationId.firstname} application to the <b> Agent  ${selectedAgentFromList.username} </b>! `,
+                icon: 'info',
+
+
+                showCancelButton: true,
+                confirmButtonColor: '#00B894',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: "Yes, I'm Sure!"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const response = await axios.patch(`https://studyapi.ieodkv.com/applications/update_row_table/${applicationId._id}`, {
+                        case_owner: selectedAgentFromList,
+                        current_desk: selectedAgentFromList
+                    })
+                    console.log(response.data, response.status)
+                    await FetchAllApplications()
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const handleViewApplication = async (data) => {
+        console.log("data is me ", data)
+        try {
+            setApplicationModal(true)
+            setApplicationModalData(data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     // const actionColumn = [
     //     {
@@ -217,8 +329,9 @@ const DatatableApplications = () => {
     //         },
     //     }
     // ];
-    const handleRowClick = (rowId) => {
-        console.log(`Row with ID ${rowId} clicked.`);
+    const handleRowClick = (row) => {
+        setApplicationID(row)
+        console.log(`Row with ID ${row._id} clicked.`);
         // You can add your custom logic here
     }
     const handleSelectAll = () => {
@@ -229,78 +342,6 @@ const DatatableApplications = () => {
             setSelectedRows(allRowIds);
         }
     };
-    const CustomTable = ({ data }) => {
-        return (
-            <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                <table className="w-full">
-                    <thead>
-                        <tr className="bg-blue-500 text-white">
-                            <th className="px-4 py-2 text-left">
-                                <input
-                                    type="checkbox"
-                                    onChange={handleSelectAll}
-                                    checked={selectedRows.length === data.length}
-                                />
-                            </th>
-                            <th className="px-4 py-2 text-left">Student Name</th>
-                            <th className="px-4 py-2 text-left">Gender</th>
-                            <th className="px-4 py-2 text-left">ID</th>
-                            <th className="px-4 py-2 text-left">Program</th>
-                            <th className="px-4 py-2 text-left">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data?.map((row, index) => (
-                            <tr key={row._id} onClick={() => handleRowClick(row._id)}>
-
-                                <td className="px-4 py-2 text-left">
-                                    <input
-                                        type="checkbox"
-                                        onChange={() => {
-                                            setSelectedRows((prevSelectedRows) => {
-                                                if (prevSelectedRows.includes(row._id)) {
-                                                    return prevSelectedRows.filter((id) => id !== row._id);
-                                                } else {
-                                                    return [...prevSelectedRows, row._id];
-                                                }
-                                            });
-                                        }}
-                                        checked={selectedRows.includes(row._id)}
-                                    />
-                                </td>
-                                <td className="px-4 py-2 text-left">{row.firstname + " " + row.lastname}</td>
-                                <td className="px-4 py-2 text-left">{row.studentId.gender}</td>
-                                <td className="px-4 py-2 text-left">{row._id}</td>
-                                <td className="px-4 py-2 text-left">{row.programId.name}</td>
-                                <td className="px-4 py-2 text-left">
-                                    <select className="w-full p-2.5 text-gray-500 bg-white border rounded-md shadow-sm outline-none appearance-none focus:border-indigo-600">
-                                        {agents.map((data, index) => {
-                                            return (
-                                                <>
-                                                    <option>Assign Application</option>
-                                                    <option>{data.username}</option>
-                                                </>
-                                            )
-                                        })}
-                                    </select>
-                                    <div className="w-full flex justify-between align-center py-1">
-                                        <button className="bg-primary hover:bg-red-700 text-white  py-1 px-2 rounded">
-                                            View</button>
-                                        <button className="bg-blue-500 hover:bg-blue-700 text-white  py-1 px-2 rounded mx-3 ">Edit</button>
-                                        <button className="bg-red-500 hover:bg-red-700 text-white  py-1 px-2 rounded"
-                                            onClick={() => askHandleDelete(row._id)}>
-                                            Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div >
-
-        );
-    };
-
 
     return (
 
@@ -378,6 +419,121 @@ const DatatableApplications = () => {
                 </Dialog>
             </Transition.Root>
 
+            {/* View Application Modal  */}
+            {
+                viewApplicaiton &&
+                <Transition.Root show={viewApplicaiton} as={Fragment}>
+                    <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setApplicationModal}>
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+                        </Transition.Child>
+
+                        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                                <Transition.Child
+                                    as={Fragment}
+                                    enter="ease-out duration-300"
+                                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                    enterTo="opacity-100 translate-y-0 sm:scale-100"
+                                    leave="ease-in duration-200"
+                                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                >
+                                    <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                                        <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                                            <div className="sm:flex sm:items-start">
+                                                <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary sm:mx-0 sm:h-10 sm:w-10">
+                                                    <FaRegNewspaper className="h-6 w-6 text-white" aria-hidden="true" />
+                                                </div>
+                                                <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                                    <Dialog.Title as="h3" className="text-base underline font-semibold leading-6 text-gray-900">
+                                                        {ApplicationModalData.firstname + " " + ApplicationModalData.lastname}
+                                                    </Dialog.Title>
+                                                    <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                                                        Program : {ApplicationModalData.program_name} ({ApplicationModalData.programType})
+                                                    </Dialog.Title>
+                                                    <div className="mt-2">
+                                                        <p className="text-sm text-gray-500">
+                                                            Applied On : {ApplicationModalData.appliedDate}/{ApplicationModalData.appliedMonth}/{ApplicationModalData.appliedYear}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            University Name : {ApplicationModalData.university_name}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Campus : {ApplicationModalData.campus}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Degree : {ApplicationModalData.degree}
+                                                        </p>
+                                                        <br />
+                                                        <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                                                            Student Info :
+                                                        </Dialog.Title>
+                                                        <p className="text-sm text-gray-500">
+                                                            First name : {ApplicationModalData.firstname}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Last name : {ApplicationModalData.lastname}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Gender : {ApplicationModalData.gender}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Phone no. : {ApplicationModalData.phoneNo}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Email : {ApplicationModalData.email}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Region : {ApplicationModalData.region}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Province : {ApplicationModalData.province}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            : {ApplicationModalData.nationality}
+                                                        </p>
+
+                                                        <input type="text" className="w-full p-5 pl-2 border-rounded mt-5 mb-5 rounded"
+                                                            onChange={(e) => { setCoreName(e.target.value) }}
+                                                            placeholder="Enter Core Name"
+                                                            name="" id="" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                                            <button
+                                                type="button"
+                                                className="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover: sm:ml-3 sm:w-auto"
+                                                onClick={() => handleAddCore()}
+                                            >
+                                                Create Core
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                                onClick={() => setApplicationModal(false)}
+                                            // ref={cancelButtonRef}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </Dialog.Panel>
+                                </Transition.Child>
+                            </div>
+                        </div>
+                    </Dialog>
+                </Transition.Root>
+            }
 
             <div className="datatableTitleWrap">
 
@@ -440,5 +596,6 @@ const DatatableApplications = () => {
         </div>
     );
 };
+
 
 export default DatatableApplications;
