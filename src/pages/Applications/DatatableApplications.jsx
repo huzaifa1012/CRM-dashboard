@@ -11,6 +11,7 @@ import { HiOutlineViewGridAdd } from 'react-icons/hi';
 import { FaRegNewspaper } from 'react-icons/fa';
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { Select } from "@mui/material";
 
 
 const DatatableApplications = () => {
@@ -20,14 +21,65 @@ const DatatableApplications = () => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [Open, setModalOpen] = useState(false)
     const [viewApplicaiton, setApplicationModal] = useState(false)
-    const [coreName, setCoreName] = useState(false)
+    // const [coreName, setCoreName] = useState(false)
     const [Assigned, setAssigned] = useState(false)
     const [agents, setAgents] = useState([])
     const [applicationId, setApplicationID] = useState('')
     const [agentId, setAgentId] = useState([])
     const [ApplicationModalData, setApplicationModalData] = useState([])
-
     const cancelButtonRef = useRef(null)
+
+    // Applicaiton Update State
+    const [coreName, setCoreName] = useState(ApplicationModalData.firstname);
+
+    const [isEditing, setIsEditing] = useState(false); // Flag to track editing mode
+    const [formData, setFormData] = useState({
+        programId: ApplicationModalData,
+        firstname: ApplicationModalData.firstname,
+        lastname: ApplicationModalData.lastname,
+        gender: ApplicationModalData.gender,
+        phoneNo: ApplicationModalData.phoneNo,
+        email: ApplicationModalData.email,
+        region: ApplicationModalData.region,
+        province: ApplicationModalData.province,
+        nationality: ApplicationModalData.nationality,
+    });
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [gender, setGender] = useState('')
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    // Function to handle updating the application data
+    const handleUpdateApplication = async (programId) => {
+        console.log(programId)
+        console.log(firstName)
+        try {
+            const response = await axios.patch('https://studyapi.ieodkv.com/applications/update/6509505219805a3588311a80/650012da5c97b7265af36cd4',
+                {
+                    firstname: firstName,
+                    lastname: lastName,
+                    gender: gender,
+                    CGPA: "200",
+                    programId: programId
+                })
+
+            console.log("Application Update Response", response.data)
+            setModalOpen(false)
+        } catch (error) {
+            console.log("Update Error", error)
+        }
+
+
+        setIsEditing(false);
+    };
+
+    // Applicaiton Update State ends
+
+
 
     const handleCheckboxChange = () => {
         setAssigned(!Assigned)
@@ -455,58 +507,150 @@ const DatatableApplications = () => {
                                                 </div>
                                                 <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                                     <Dialog.Title as="h3" className="text-base underline font-semibold leading-6 text-gray-900">
-                                                        {ApplicationModalData.firstname + " " + ApplicationModalData.lastname}
+                                                        {isEditing ? (
+                                                            <input
+                                                                type="text"
+                                                                name="coreName"
+                                                                value={firstName}
+                                                                onChange={(e) => { setFirstName(e.target.value) }}
+                                                                placeholder="Core Name"
+                                                            />
+                                                        ) : (
+                                                            ApplicationModalData.firstname
+                                                        )}
                                                     </Dialog.Title>
                                                     <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
                                                         Program : {ApplicationModalData.program_name} ({ApplicationModalData.programType})
                                                     </Dialog.Title>
+
                                                     <div className="mt-2">
-                                                        <p className="text-sm text-gray-500">
-                                                            Applied On : {ApplicationModalData.appliedDate}/{ApplicationModalData.appliedMonth}/{ApplicationModalData.appliedYear}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            University Name : {ApplicationModalData.university_name}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Campus : {ApplicationModalData.campus}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Degree : {ApplicationModalData.degree}
-                                                        </p>
-                                                        <br />
                                                         <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
                                                             Student Info :
                                                         </Dialog.Title>
                                                         <p className="text-sm text-gray-500">
-                                                            First name : {ApplicationModalData.firstname}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Last name : {ApplicationModalData.lastname}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Gender : {ApplicationModalData.gender}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Phone no. : {ApplicationModalData.phoneNo}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Email : {ApplicationModalData.email}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Region : {ApplicationModalData.region}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Province : {ApplicationModalData.province}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            : {ApplicationModalData.nationality}
-                                                        </p>
+                                                            First name : {isEditing ? (
+                                                                <input
+                                                                    type="text"
+                                                                    name="firstName"
+                                                                    value={firstName}
+                                                                    onChange={(e) => { setFirstName(e.target.value) }}
 
-                                                        <input type="text" className="w-full p-5 pl-2 border-rounded mt-5 mb-5 rounded"
-                                                            onChange={(e) => { setCoreName(e.target.value) }}
-                                                            placeholder="Enter Core Name"
-                                                            name="" id="" />
+                                                                />
+                                                            ) : (
+                                                                ApplicationModalData.firstname
+                                                            )}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Last name : {isEditing ? (
+                                                                <input
+                                                                    type="text"
+                                                                    name="lastName"
+                                                                    value={lastName}
+                                                                    onChange={(e) => { setLastName(e.target.value) }}
+
+                                                                />
+                                                            ) : (
+                                                                ApplicationModalData.lastname
+                                                            )}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Gender : {isEditing ? (
+                                                                <select
+                                                                    type="text"
+
+                                                                    style={{ "border": "1px solid", "borderColor": "gray", "minWidth": "160px" }}
+                                                                    name="gender"
+                                                                    value={gender}
+                                                                    onChange={(e) => { setGender(e.target.value) }}
+                                                                    SelectDisplayProps={"sdsad"}
+                                                                >
+                                                                    <option
+                                                                        onChange={(e) => { setGender(e.target.value) }}
+
+                                                                        value="Male">Male</option>
+                                                                    <option value="Female">Female</option>
+                                                                </select>
+                                                            ) : (
+                                                                ApplicationModalData.gender
+                                                            )}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Phone no. : {isEditing ? (
+                                                                <input
+                                                                    type="text"
+                                                                    name="phoneNo"
+                                                                    value={formData.phoneNo}
+                                                                    onChange={handleInputChange}
+                                                                />
+                                                            ) : (
+                                                                ApplicationModalData.phoneNo
+                                                            )}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Email : {isEditing ? (
+                                                                <input
+                                                                    type="text"
+                                                                    name="email"
+                                                                    value={formData.email}
+                                                                    onChange={handleInputChange}
+                                                                />
+                                                            ) : (
+                                                                ApplicationModalData.email
+                                                            )}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Region : {isEditing ? (
+                                                                <input
+                                                                    type="text"
+                                                                    name="region"
+                                                                    value={formData.region}
+                                                                    onChange={handleInputChange}
+                                                                />
+                                                            ) : (
+                                                                ApplicationModalData.region
+                                                            )}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Province : {isEditing ? (
+                                                                <input
+                                                                    type="text"
+                                                                    name="province"
+                                                                    value={formData.province}
+                                                                    onChange={handleInputChange}
+                                                                />
+                                                            ) : (
+                                                                ApplicationModalData.province
+                                                            )}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            Nationality : {isEditing ? (
+                                                                <input
+                                                                    type="text"
+                                                                    name="nationality"
+                                                                    value={formData.nationality}
+                                                                    onChange={handleInputChange}
+                                                                />
+                                                            ) : (
+                                                                ApplicationModalData.nationality
+                                                            )}
+                                                        </p>
                                                     </div>
+
+                                                    {isEditing ? (
+                                                        <input
+                                                            type="text"
+                                                            className="w-full p-5 pl-2 border-rounded mt-5 mb-5 rounded"
+                                                            value={formData.coreName}
+                                                            onChange={handleInputChange}
+                                                            placeholder="Enter Core Name"
+                                                        />
+                                                    ) : null}
+
+                                                    {isEditing ? (
+                                                        <button onClick={() => handleUpdateApplication(ApplicationModalData.programId._id)}>Update Application</button>
+                                                    ) : (
+                                                        <button onClick={() => setIsEditing(true)}>Edit Application</button>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
