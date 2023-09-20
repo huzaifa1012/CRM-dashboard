@@ -21,7 +21,6 @@ const DatatableApplications = () => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [Open, setModalOpen] = useState(false)
     const [viewApplicaiton, setApplicationModal] = useState(false)
-    // const [coreName, setCoreName] = useState(false)
     const [Assigned, setAssigned] = useState(false)
     const [agents, setAgents] = useState([])
     const [applicationId, setApplicationID] = useState('')
@@ -47,6 +46,21 @@ const DatatableApplications = () => {
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [gender, setGender] = useState('')
+    const [phone, setPhone] = useState('')
+    const [email, setEmail] = useState('')
+    const [region, setRegion] = useState('')
+    const [province, setProvince] = useState('')
+    const [nationality, setNationality] = useState('')
+    const [countryLivingIn, setCountryLivingIn] = useState('')
+    const [nic, setNic] = useState('')
+    const [englishTest, setEnglishTest] = useState('')
+    const [CGPA, setCGPA] = useState('')
+    const [score, setScore] = useState('')
+    const [passport, setPassport] = useState('')
+    const [dateOfBirth, setDob] = useState('')
+    const [monthOfBirth, setMob] = useState('')
+    const [yearOfBirth, setYob] = useState('')
+    const [address, setAddress] = useState('')
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -55,17 +69,32 @@ const DatatableApplications = () => {
 
     // Function to handle updating the application data
     const handleUpdateApplication = async (programId) => {
-        console.log(programId)
-        console.log(firstName)
+        const requestData = {
+            ...programId && { programId },
+            ...(firstName && { firstname: firstName }),
+            ...(lastName && { lastname: lastName }),
+            ...(nic && { nic }),
+            ...(gender && { gender }),
+            ...(phone && { phoneNo: phone }),
+            ...(email && { email }),
+            ...(region && { region }),
+            ...(nationality && { nationality }),
+            ...(countryLivingIn && { countryLivingIn }),
+            ...(province && { province }),
+            ...(nic && { englishTest }),
+            ...(CGPA && { CGPA }),
+            ...(score && { score }),
+            ...(passport && { passport }),
+            ...(dateOfBirth && { dateOfBirth }),
+            ...(monthOfBirth && { monthOfBirth }),
+            ...(yearOfBirth && { yearOfBirth }),
+            ...(address && { address }),
+        };
+
         try {
             const response = await axios.patch('https://studyapi.ieodkv.com/applications/update/6509505219805a3588311a80/650012da5c97b7265af36cd4',
-                {
-                    firstname: firstName,
-                    lastname: lastName,
-                    gender: gender,
-                    CGPA: "200",
-                    programId: programId
-                })
+                requestData
+            )
 
             console.log("Application Update Response", response.data)
             setModalOpen(false)
@@ -522,135 +551,236 @@ const DatatableApplications = () => {
                                                     <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
                                                         Program : {ApplicationModalData.program_name} ({ApplicationModalData.programType})
                                                     </Dialog.Title>
+                                                    <div className="mt-2 display-flex flex " style={{ minWidth: '900px' }}>
+                                                        <div style={{ width: '220px', marginRight: "5px" }} >
+                                                            <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                                                                Student Info :
+                                                            </Dialog.Title>
+                                                            <p className="text-sm text-gray-500">
+                                                                First name : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="firstName"
+                                                                        value={firstName}
+                                                                        onChange={(e) => { setFirstName(e.target.value) }}
 
-                                                    <div className="mt-2">
-                                                        <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                                                            Student Info :
-                                                        </Dialog.Title>
-                                                        <p className="text-sm text-gray-500">
-                                                            First name : {isEditing ? (
-                                                                <input
-                                                                    type="text"
-                                                                    name="firstName"
-                                                                    value={firstName}
-                                                                    onChange={(e) => { setFirstName(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.firstname
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Last name : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="lastName"
+                                                                        value={lastName}
+                                                                        onChange={(e) => { setLastName(e.target.value) }}
 
-                                                                />
-                                                            ) : (
-                                                                ApplicationModalData.firstname
-                                                            )}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Last name : {isEditing ? (
-                                                                <input
-                                                                    type="text"
-                                                                    name="lastName"
-                                                                    value={lastName}
-                                                                    onChange={(e) => { setLastName(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.lastname
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Gender : {isEditing ? (
+                                                                    <select
+                                                                        type="text"
 
-                                                                />
-                                                            ) : (
-                                                                ApplicationModalData.lastname
-                                                            )}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Gender : {isEditing ? (
-                                                                <select
-                                                                    type="text"
-
-                                                                    style={{ "border": "1px solid", "borderColor": "gray", "minWidth": "160px" }}
-                                                                    name="gender"
-                                                                    value={gender}
-                                                                    onChange={(e) => { setGender(e.target.value) }}
-                                                                    SelectDisplayProps={"sdsad"}
-                                                                >
-                                                                    <option
+                                                                        style={{ "border": "1px solid", "borderColor": "gray", "minWidth": "160px" }}
+                                                                        name="gender"
+                                                                        value={gender}
                                                                         onChange={(e) => { setGender(e.target.value) }}
+                                                                        SelectDisplayProps={"sdsad"}
+                                                                    >
+                                                                        <option
+                                                                            onChange={(e) => { setGender(e.target.value) }}
 
-                                                                        value="Male">Male</option>
-                                                                    <option value="Female">Female</option>
-                                                                </select>
+                                                                            value="Male">Male</option>
+                                                                        <option value="Female">Female</option>
+                                                                    </select>
+                                                                ) : (
+                                                                    ApplicationModalData.gender
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Phone no. : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="phoneNo"
+                                                                        value={phone}
+                                                                        onChange={(e) => { setPhone(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.phoneNo
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Email : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="email"
+                                                                        value={email}
+                                                                        onChange={(e) => { setEmail(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.email
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                NIC : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="email"
+                                                                        value={nic}
+                                                                        onChange={(e) => { setNic(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.nic
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Region : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="region"
+                                                                        value={region}
+                                                                        onChange={(e) => { setRegion(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.region
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Province : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="province"
+                                                                        value={province}
+                                                                        onChange={(e) => { setProvince(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.province
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                        <div style={{ width: '500px' }} >
+                                                            <p className="text-sm text-gray-500">
+                                                                Nationality : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="nationality"
+                                                                        value={nationality}
+                                                                        onChange={(e) => { setNationality(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.nationality
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Country Living In : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="nationality"
+                                                                        value={countryLivingIn}
+                                                                        onChange={(e) => { setCountryLivingIn(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.countryLivingIn
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Address : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="nationality"
+                                                                        value={address}
+                                                                        onChange={(e) => { setAddress(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.address
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                CGPA : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="nationality"
+                                                                        value={CGPA}
+                                                                        onChange={(e) => { setCGPA(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.CGPA
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm py-1 text-gray-500">
+                                                                Score : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="nationality"
+                                                                        value={score}
+                                                                        onChange={(e) => { setScore(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.score
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Date Of Birth : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="nationality"
+                                                                        value={dateOfBirth}
+                                                                        onChange={(e) => { setDob(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.dateOfBirth
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Month Of Birth : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="nationality"
+                                                                        value={monthOfBirth}
+                                                                        onChange={(e) => { setMob(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.monthOfBirth
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Year Of Birth : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="nationality"
+                                                                        value={yearOfBirth}
+                                                                        onChange={(e) => { setYob(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.yearOfBirth
+                                                                )}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                Passport : {isEditing ? (
+                                                                    <input
+                                                                        type="text"
+                                                                        name="nationality"
+                                                                        value={passport}
+                                                                        onChange={(e) => { setPassport(e.target.value) }}
+                                                                    />
+                                                                ) : (
+                                                                    ApplicationModalData.passport
+                                                                )}
+                                                            </p>
+                                                            {isEditing ? (
+                                                                <button onClick={() => handleUpdateApplication(ApplicationModalData.programId._id)}>Update Application</button>
                                                             ) : (
-                                                                ApplicationModalData.gender
+                                                                <button onClick={() => setIsEditing(true)}>Edit Application</button>
                                                             )}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Phone no. : {isEditing ? (
-                                                                <input
-                                                                    type="text"
-                                                                    name="phoneNo"
-                                                                    value={formData.phoneNo}
-                                                                    onChange={handleInputChange}
-                                                                />
-                                                            ) : (
-                                                                ApplicationModalData.phoneNo
-                                                            )}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Email : {isEditing ? (
-                                                                <input
-                                                                    type="text"
-                                                                    name="email"
-                                                                    value={formData.email}
-                                                                    onChange={handleInputChange}
-                                                                />
-                                                            ) : (
-                                                                ApplicationModalData.email
-                                                            )}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Region : {isEditing ? (
-                                                                <input
-                                                                    type="text"
-                                                                    name="region"
-                                                                    value={formData.region}
-                                                                    onChange={handleInputChange}
-                                                                />
-                                                            ) : (
-                                                                ApplicationModalData.region
-                                                            )}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Province : {isEditing ? (
-                                                                <input
-                                                                    type="text"
-                                                                    name="province"
-                                                                    value={formData.province}
-                                                                    onChange={handleInputChange}
-                                                                />
-                                                            ) : (
-                                                                ApplicationModalData.province
-                                                            )}
-                                                        </p>
-                                                        <p className="text-sm text-gray-500">
-                                                            Nationality : {isEditing ? (
-                                                                <input
-                                                                    type="text"
-                                                                    name="nationality"
-                                                                    value={formData.nationality}
-                                                                    onChange={handleInputChange}
-                                                                />
-                                                            ) : (
-                                                                ApplicationModalData.nationality
-                                                            )}
-                                                        </p>
+                                                        </div>
+
                                                     </div>
-
-                                                    {isEditing ? (
-                                                        <input
-                                                            type="text"
-                                                            className="w-full p-5 pl-2 border-rounded mt-5 mb-5 rounded"
-                                                            value={formData.coreName}
-                                                            onChange={handleInputChange}
-                                                            placeholder="Enter Core Name"
-                                                        />
-                                                    ) : null}
-
-                                                    {isEditing ? (
-                                                        <button onClick={() => handleUpdateApplication(ApplicationModalData.programId._id)}>Update Application</button>
-                                                    ) : (
-                                                        <button onClick={() => setIsEditing(true)}>Edit Application</button>
-                                                    )}
                                                 </div>
                                             </div>
                                         </div>
