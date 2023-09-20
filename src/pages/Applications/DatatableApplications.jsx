@@ -12,6 +12,7 @@ import { FaRegNewspaper } from 'react-icons/fa';
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { Select } from "@mui/material";
+import Modal from '@material-ui/core/Modal';
 
 
 const DatatableApplications = () => {
@@ -66,6 +67,14 @@ const DatatableApplications = () => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+    const handleClose = () => {
+        console.log("Chalgya")
+        setApplicationModal(false);
+    };
+
+    const handleOpen = () => {
+        setApplicationModal(true);
+    };
 
     // Function to handle updating the application data
     const handleUpdateApplication = async (programId) => {
@@ -105,7 +114,6 @@ const DatatableApplications = () => {
 
         setIsEditing(false);
     };
-
     // Applicaiton Update State ends
 
 
@@ -226,6 +234,7 @@ const DatatableApplications = () => {
     useEffect(() => {
         FetchAllApplications()
         FetchAllAgentMembers()
+        let timerId = setInterval(() => FetchAllApplications(), 120000);
     }, [selectedRows, Assigned]);
     const FetchAllApplications = async () => {
         axios
@@ -379,7 +388,6 @@ const DatatableApplications = () => {
             console.log(error)
         }
     }
-
     // const actionColumn = [
     //     {
     //         field: "action",
@@ -423,10 +431,293 @@ const DatatableApplications = () => {
             setSelectedRows(allRowIds);
         }
     };
-
     return (
-
         <div className="datatable">
+            {viewApplicaiton &&
+                <div style={{ padding: 30 }}>
+                    <div
+                        style={{
+                            position: 'absolute',
+                            border: '2px solid #000',
+                            backgroundColor: 'white',
+                            zIndex: 1,
+                            borderRadius: "20px",
+                            borderColor: "#00B894",
+                            boxShadow: '2px solid black',
+                            // height: '700px',
+                            width: '80%',
+                            margin: 'auto'
+                        }}
+                    >
+                        <div style={{ display: 'block', padding: 30, width: '100%' }}>
+
+                            <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                <div className="mt-2 display-flex flex " style={{ width: '100%' }}>
+                                    <div style={{ width: '50%', marginRight: "5px" }} >
+                                        <div as="h3" className="text-base font-semibold leading-6 text-gray-900">
+                                            Program : {ApplicationModalData.program_name} ({ApplicationModalData.programType})
+                                        </div>
+
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            First name : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    name="firstName"
+                                                    placeholder={ApplicationModalData.firstname}
+                                                    value={firstName}
+                                                    onChange={(e) => { setFirstName(e.target.value) }}
+
+                                                />
+                                            ) : (
+                                                ApplicationModalData.firstname
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Last name : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    name="lastName"
+                                                    placeholder={ApplicationModalData.lastname}
+                                                    value={lastName}
+                                                    onChange={(e) => { setLastName(e.target.value) }}
+
+                                                />
+                                            ) : (
+                                                ApplicationModalData.lastname
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Gender : {isEditing ? (
+                                                <select
+                                                    type="text"
+
+                                                    style={{ "border": "1px solid", "borderColor": "gray", "minWidth": "160px" }}
+                                                    name="gender"
+                                                    value={gender}
+                                                    onChange={(e) => { setGender(e.target.value) }}
+                                                    SelectDisplayProps={"sdsad"}
+                                                >
+                                                    <option
+                                                        onChange={(e) => { setGender(e.target.value) }}
+
+                                                        value="Male">Male</option>
+                                                    <option value="Female">Female</option>
+                                                </select>
+                                            ) : (
+                                                ApplicationModalData.gender
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Phone no. : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.phoneNo}
+                                                    name="phoneNo"
+                                                    value={phone}
+                                                    onChange={(e) => { setPhone(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.phoneNo
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Email : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.email} name="email"
+
+                                                    value={email}
+                                                    onChange={(e) => { setEmail(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.email
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            NIC : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.nic} name="email"
+                                                    value={nic}
+                                                    onChange={(e) => { setNic(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.nic
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Region : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.region}
+                                                    name="region"
+                                                    value={region}
+                                                    onChange={(e) => { setRegion(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.region
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Province : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.province}
+                                                    name="province"
+                                                    value={province}
+                                                    onChange={(e) => { setProvince(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.province
+                                            )}
+                                        </p>
+                                    </div>
+                                    <div style={{ width: '50%' }} >
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Nationality : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.nationality} name="nationality"
+                                                    value={nationality}
+                                                    onChange={(e) => { setNationality(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.nationality
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Country Living In : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.countryLivingIn} name="nationality
+                                                "
+                                                    value={countryLivingIn}
+                                                    onChange={(e) => { setCountryLivingIn(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.countryLivingIn
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Address : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.address} name="nationality
+                                                "
+                                                    value={address}
+                                                    onChange={(e) => { setAddress(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.address
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            CGPA : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.CGPA} name="nationality
+                                                "
+                                                    value={CGPA}
+                                                    onChange={(e) => { setCGPA(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.CGPA
+                                            )}
+                                        </p>
+                                        <p className="text-sm py-1 text-gray-500">
+                                            Score : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    name="nationality"
+                                                    value={score}
+                                                    onChange={(e) => { setScore(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.score
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Date Of Birth : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.dateOfBirth} name="nationality
+                                                "
+                                                    value={dateOfBirth}
+                                                    onChange={(e) => { setDob(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.dateOfBirth
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Month Of Birth : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.monthOfBirth} name="nationality
+                                                "
+                                                    value={monthOfBirth}
+                                                    onChange={(e) => { setMob(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.monthOfBirth
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Year Of Birth : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.yearOfBirth} name="nationality
+                                                "
+                                                    value={yearOfBirth}
+                                                    onChange={(e) => { setYob(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.yearOfBirth
+                                            )}
+                                        </p>
+                                        <p className="text-sm text-gray-500 pt-2 " style={{ height: '42px' }} >
+                                            Passport : {isEditing ? (
+                                                <input
+                                                    type="text"
+                                                    placeholder={ApplicationModalData.passport} name="nationality
+                                                "
+                                                    value={passport}
+                                                    onChange={(e) => { setPassport(e.target.value) }}
+                                                />
+                                            ) : (
+                                                ApplicationModalData.passport
+                                            )}
+                                        </p>
+                                        {isEditing ? (
+                                            <button onClick={() => handleUpdateApplication(ApplicationModalData.programId._id)}>Update Application</button>
+                                        ) : (
+                                            <button onClick={() => setIsEditing(true)}>Edit Application</button>
+                                        )}
+                                    </div>
+
+                                </div>
+                                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                                    <button
+                                        type="button"
+                                        className="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover: sm:ml-3 sm:w-auto"
+                                        onClick={() => handleAddCore()}
+                                    >
+                                        Create Core
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                                        // onClick={() => setApplicationModal(false)}
+                                        onClick={() => handleClose()}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
 
             <Transition.Root show={Open} as={Fragment}>
                 <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setModalOpen}>
@@ -501,7 +792,7 @@ const DatatableApplications = () => {
             </Transition.Root>
 
             {/* View Application Modal  */}
-            {
+            {/* {
                 viewApplicaiton &&
                 <Transition.Root show={viewApplicaiton} as={Fragment}>
                     <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setApplicationModal}>
@@ -807,7 +1098,7 @@ const DatatableApplications = () => {
                         </div>
                     </Dialog>
                 </Transition.Root>
-            }
+            } */}
 
             <div className="datatableTitleWrap">
 
