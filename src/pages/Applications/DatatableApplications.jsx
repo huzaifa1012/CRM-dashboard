@@ -1,19 +1,15 @@
 import "../../style/datatable.css";
-import { DataGrid } from "@mui/x-data-grid";
-import { applicationColumns } from "../../datatablesource";
-import { Link } from "react-router-dom";
 import React, { useState, useEffect, useRef, Fragment } from "react";
 import axios from "axios";
 import PopupAlert from "../../components/popupalert/popupAlert";
 import Swal from "sweetalert2";
 import { MdDelete } from 'react-icons/md';
 import { HiOutlineViewGridAdd } from 'react-icons/hi';
-import { FaRegNewspaper } from 'react-icons/fa';
 import { Dialog, Transition } from '@headlessui/react'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { Select } from "@mui/material";
-import Modal from '@material-ui/core/Modal';
-
+// Tailwind Imports for 3 dot
+import { Menu } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
+// end
 
 const DatatableApplications = () => {
     const [applications, setApplicationData] = useState([]);
@@ -31,19 +27,7 @@ const DatatableApplications = () => {
 
     // Applicaiton Update State
     const [coreName, setCoreName] = useState(ApplicationModalData.firstname);
-
     const [isEditing, setIsEditing] = useState(false); // Flag to track editing mode
-    const [formData, setFormData] = useState({
-        programId: ApplicationModalData,
-        firstname: ApplicationModalData.firstname,
-        lastname: ApplicationModalData.lastname,
-        gender: ApplicationModalData.gender,
-        phoneNo: ApplicationModalData.phoneNo,
-        email: ApplicationModalData.email,
-        region: ApplicationModalData.region,
-        province: ApplicationModalData.province,
-        nationality: ApplicationModalData.nationality,
-    });
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [gender, setGender] = useState('')
@@ -63,18 +47,13 @@ const DatatableApplications = () => {
     const [yearOfBirth, setYob] = useState('')
     const [address, setAddress] = useState('')
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
     const handleClose = () => {
         console.log("Chalgya")
         setApplicationModal(false);
     };
-
-    const handleOpen = () => {
-        setApplicationModal(true);
-    };
+    function classNames(...classes) {
+        return classes.filter(Boolean).join(' ')
+    }
 
     // Function to handle updating the application data
     const handleUpdateApplication = async (programId) => {
@@ -114,10 +93,7 @@ const DatatableApplications = () => {
 
         setIsEditing(false);
     };
-    // Applicaiton Update State ends
-
-
-
+    // ends
     const handleCheckboxChange = () => {
         setAssigned(!Assigned)
     }
@@ -152,8 +128,9 @@ const DatatableApplications = () => {
     }
     const CustomTable = ({ data }) => {
         return (
-            <div className="bg-white shadow-md rounded-lg overflow-hidden">
-                <table className="w-full">
+            <div className="">
+                {/* bg-white shadow-md rounded-lg overflow-hidden */}
+                <table className="w-full" style={{ height: '900px' }}>
                     <thead>
                         <tr className="bg-blue-500 text-white">
                             <th className="px-4 py-2 text-left">
@@ -215,12 +192,132 @@ const DatatableApplications = () => {
 
 
                                     <div className="w-full flex justify-between align-center py-1">
+                                        <Menu as="div" className="relative inline-block text-left">
+                                            <div>
+                                                <Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                                                    Options
+                                                    <ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
+                                                </Menu.Button>
+                                            </div>
+
+                                            <Transition
+                                                as={Fragment}
+                                                enter="transition ease-out duration-100"
+                                                enterFrom="transform opacity-0 scale-95"
+                                                enterTo="transform opacity-100 scale-100"
+                                                leave="transition ease-in duration-75"
+                                                leaveFrom="transform opacity-100 scale-100"
+                                                leaveTo="transform opacity-0 scale-95"
+                                            >
+                                                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                    <div className="py-1">
+                                                        <Menu.Item>
+                                                            {({ active }) => (
+                                                                <a
+                                                                    href="#"
+                                                                    className={classNames(
+                                                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                                        'block px-4 py-2 text-sm'
+                                                                    )}
+                                                                >
+                                                                    Edit
+                                                                </a>
+                                                            )}
+                                                        </Menu.Item>
+                                                        <Menu.Item>
+                                                            {({ active }) => (
+                                                                <a
+                                                                    href="#"
+                                                                    className={classNames(
+                                                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                                        'block px-4 py-2 text-sm'
+                                                                    )}
+                                                                >
+                                                                    Duplicate
+                                                                </a>
+                                                            )}
+                                                        </Menu.Item>
+                                                    </div>
+                                                    <div className="py-1">
+                                                        <Menu.Item>
+                                                            {({ active }) => (
+                                                                <a
+                                                                    href="#"
+                                                                    className={classNames(
+                                                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                                        'block px-4 py-2 text-sm'
+                                                                    )}
+                                                                >
+                                                                    Archive
+                                                                </a>
+                                                            )}
+                                                        </Menu.Item>
+                                                        <Menu.Item>
+                                                            {({ active }) => (
+                                                                <a
+                                                                    href="#"
+                                                                    className={classNames(
+                                                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                                        'block px-4 py-2 text-sm'
+                                                                    )}
+                                                                >
+                                                                    Move
+                                                                </a>
+                                                            )}
+                                                        </Menu.Item>
+                                                    </div>
+                                                    <div className="py-1">
+                                                        <Menu.Item>
+                                                            {({ active }) => (
+                                                                <a
+                                                                    href="#"
+                                                                    className={classNames(
+                                                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                                        'block px-4 py-2 text-sm'
+                                                                    )}
+                                                                >
+                                                                    Share
+                                                                </a>
+                                                            )}
+                                                        </Menu.Item>
+                                                        <Menu.Item>
+                                                            {({ active }) => (
+                                                                <a
+                                                                    href="#"
+                                                                    className={classNames(
+                                                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                                        'block px-4 py-2 text-sm'
+                                                                    )}
+                                                                >
+                                                                    Add to favorites
+                                                                </a>
+                                                            )}
+                                                        </Menu.Item>
+                                                    </div>
+                                                    <div className="py-1">
+                                                        <Menu.Item>
+                                                            {({ active }) => (
+                                                                <a
+                                                                    onClick={() => askHandleDelete(row._id)}
+                                                                    className={classNames(
+                                                                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                                        'block px-4 py-2 text-sm'
+                                                                    )}
+                                                                >
+                                                                    Delete
+                                                                </a>
+                                                            )}
+                                                        </Menu.Item>
+                                                    </div>
+                                                </Menu.Items>
+                                            </Transition>
+                                        </Menu>
                                         <button onClick={() => handleViewApplication(row)} className="bg-primary hover:bg-red-700 text-white  py-1 px-2 rounded">
                                             View</button>
                                         <button className="bg-blue-500 hover:bg-blue-700 text-white  py-1 px-2 rounded mx-3 ">Edit</button>
-                                        <button className="bg-red-500 hover:bg-red-700 text-white  py-1 px-2 rounded"
+                                        {/* <button className="bg-red-500 hover:bg-red-700 text-white  py-1 px-2 rounded"
                                             onClick={() => askHandleDelete(row._id)}>
-                                            Delete</button>
+                                            Delete</button> */}
                                     </div>
                                 </td>
                             </tr>
@@ -231,10 +328,10 @@ const DatatableApplications = () => {
 
         );
     };
+
     useEffect(() => {
         FetchAllApplications()
         FetchAllAgentMembers()
-        let timerId = setInterval(() => FetchAllApplications(), 120000);
     }, [selectedRows, Assigned]);
     const FetchAllApplications = async () => {
         axios
@@ -450,7 +547,6 @@ const DatatableApplications = () => {
                         }}
                     >
                         <div style={{ display: 'block', padding: 30, width: '100%' }}>
-
                             <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                 <div className="mt-2 display-flex flex " style={{ width: '100%' }}>
                                     <div style={{ width: '50%', marginRight: "5px" }} >
@@ -694,7 +790,6 @@ const DatatableApplications = () => {
                                             <button onClick={() => setIsEditing(true)}>Edit Application</button>
                                         )}
                                     </div>
-
                                 </div>
                                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                                     <button
@@ -718,7 +813,6 @@ const DatatableApplications = () => {
                     </div>
                 </div>
             }
-
             <Transition.Root show={Open} as={Fragment}>
                 <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setModalOpen}>
                     <Transition.Child
@@ -758,11 +852,6 @@ const DatatableApplications = () => {
                                                     <p className="text-sm text-gray-500">
                                                         Just enter a core name to create a new core, and press create button
                                                     </p>
-
-                                                    <input type="text" className="w-full p-5 pl-2 border-rounded mt-5 mb-5 rounded"
-                                                        onChange={(e) => { setCoreName(e.target.value) }}
-                                                        placeholder="Enter Core Name"
-                                                        name="" id="" />
                                                 </div>
                                             </div>
                                         </div>
@@ -791,321 +880,9 @@ const DatatableApplications = () => {
                 </Dialog>
             </Transition.Root>
 
-            {/* View Application Modal  */}
-            {/* {
-                viewApplicaiton &&
-                <Transition.Root show={viewApplicaiton} as={Fragment}>
-                    <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setApplicationModal}>
-                        <Transition.Child
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
-                        >
-                            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-                        </Transition.Child>
-
-                        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-                            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                                <Transition.Child
-                                    as={Fragment}
-                                    enter="ease-out duration-300"
-                                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                    enterTo="opacity-100 translate-y-0 sm:scale-100"
-                                    leave="ease-in duration-200"
-                                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-                                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                >
-                                    <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                                        <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                                            <div className="sm:flex sm:items-start">
-                                                <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary sm:mx-0 sm:h-10 sm:w-10">
-                                                    <FaRegNewspaper className="h-6 w-6 text-white" aria-hidden="true" />
-                                                </div>
-                                                <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                                    <Dialog.Title as="h3" className="text-base underline font-semibold leading-6 text-gray-900">
-                                                        {isEditing ? (
-                                                            <input
-                                                                type="text"
-                                                                name="coreName"
-                                                                value={firstName}
-                                                                onChange={(e) => { setFirstName(e.target.value) }}
-                                                                placeholder="Core Name"
-                                                            />
-                                                        ) : (
-                                                            ApplicationModalData.firstname
-                                                        )}
-                                                    </Dialog.Title>
-                                                    <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                                                        Program : {ApplicationModalData.program_name} ({ApplicationModalData.programType})
-                                                    </Dialog.Title>
-                                                    <div className="mt-2 display-flex flex " style={{ minWidth: '900px' }}>
-                                                        <div style={{ width: '220px', marginRight: "5px" }} >
-                                                            <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                                                                Student Info :
-                                                            </Dialog.Title>
-                                                            <p className="text-sm text-gray-500">
-                                                                First name : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="firstName"
-                                                                        value={firstName}
-                                                                        onChange={(e) => { setFirstName(e.target.value) }}
-
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.firstname
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Last name : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="lastName"
-                                                                        value={lastName}
-                                                                        onChange={(e) => { setLastName(e.target.value) }}
-
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.lastname
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Gender : {isEditing ? (
-                                                                    <select
-                                                                        type="text"
-
-                                                                        style={{ "border": "1px solid", "borderColor": "gray", "minWidth": "160px" }}
-                                                                        name="gender"
-                                                                        value={gender}
-                                                                        onChange={(e) => { setGender(e.target.value) }}
-                                                                        SelectDisplayProps={"sdsad"}
-                                                                    >
-                                                                        <option
-                                                                            onChange={(e) => { setGender(e.target.value) }}
-
-                                                                            value="Male">Male</option>
-                                                                        <option value="Female">Female</option>
-                                                                    </select>
-                                                                ) : (
-                                                                    ApplicationModalData.gender
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Phone no. : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="phoneNo"
-                                                                        value={phone}
-                                                                        onChange={(e) => { setPhone(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.phoneNo
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Email : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="email"
-                                                                        value={email}
-                                                                        onChange={(e) => { setEmail(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.email
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                NIC : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="email"
-                                                                        value={nic}
-                                                                        onChange={(e) => { setNic(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.nic
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Region : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="region"
-                                                                        value={region}
-                                                                        onChange={(e) => { setRegion(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.region
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Province : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="province"
-                                                                        value={province}
-                                                                        onChange={(e) => { setProvince(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.province
-                                                                )}
-                                                            </p>
-                                                        </div>
-                                                        <div style={{ width: '500px' }} >
-                                                            <p className="text-sm text-gray-500">
-                                                                Nationality : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="nationality"
-                                                                        value={nationality}
-                                                                        onChange={(e) => { setNationality(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.nationality
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Country Living In : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="nationality"
-                                                                        value={countryLivingIn}
-                                                                        onChange={(e) => { setCountryLivingIn(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.countryLivingIn
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Address : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="nationality"
-                                                                        value={address}
-                                                                        onChange={(e) => { setAddress(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.address
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                CGPA : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="nationality"
-                                                                        value={CGPA}
-                                                                        onChange={(e) => { setCGPA(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.CGPA
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm py-1 text-gray-500">
-                                                                Score : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="nationality"
-                                                                        value={score}
-                                                                        onChange={(e) => { setScore(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.score
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Date Of Birth : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="nationality"
-                                                                        value={dateOfBirth}
-                                                                        onChange={(e) => { setDob(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.dateOfBirth
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Month Of Birth : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="nationality"
-                                                                        value={monthOfBirth}
-                                                                        onChange={(e) => { setMob(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.monthOfBirth
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Year Of Birth : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="nationality"
-                                                                        value={yearOfBirth}
-                                                                        onChange={(e) => { setYob(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.yearOfBirth
-                                                                )}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                Passport : {isEditing ? (
-                                                                    <input
-                                                                        type="text"
-                                                                        name="nationality"
-                                                                        value={passport}
-                                                                        onChange={(e) => { setPassport(e.target.value) }}
-                                                                    />
-                                                                ) : (
-                                                                    ApplicationModalData.passport
-                                                                )}
-                                                            </p>
-                                                            {isEditing ? (
-                                                                <button onClick={() => handleUpdateApplication(ApplicationModalData.programId._id)}>Update Application</button>
-                                                            ) : (
-                                                                <button onClick={() => setIsEditing(true)}>Edit Application</button>
-                                                            )}
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                                            <button
-                                                type="button"
-                                                className="inline-flex w-full justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover: sm:ml-3 sm:w-auto"
-                                                onClick={() => handleAddCore()}
-                                            >
-                                                Create Core
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                                                onClick={() => setApplicationModal(false)}
-                                            // ref={cancelButtonRef}
-                                            >
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    </Dialog.Panel>
-                                </Transition.Child>
-                            </div>
-                        </div>
-                    </Dialog>
-                </Transition.Root>
-            } */}
-
             <div className="datatableTitleWrap">
-
                 <div className="datatableTitle">Applications</div>
-
                 <Switcher13 />
-
                 {selectedRows.length > 0 ? (
                     <button
                         className="delete_btn"
@@ -1115,14 +892,7 @@ const DatatableApplications = () => {
                         <MdDelete size={24} /> Delete Selected Rows
                     </button>
                 ) : null}
-                {/* <button
-                    className="add_btn"
-                    onClick={() => setModalOpen(true)}
-                >
-                    <HiOutlineViewGridAdd size={20} /> Add core
-                </button> */}
             </div>
-
             {popUpShow ? (
                 <div className="Popupmodal">
                     <div
@@ -1142,21 +912,6 @@ const DatatableApplications = () => {
             ) : (
                 ""
             )}
-            {/* <DataGrid
-                className="datagrid"
-                rows={applications}
-                columns={applicationColumns.concat(actionColumn)}
-                checkboxSelection={true}
-                onSelectionModelChange={(newSelection) => {
-                    setSelectedRows(newSelection);
-                }}
-                getRowId={(row) => {
-                    return row._id;
-                }}
-                pageSize={9}
-                rowsPerPageOptions={[9]}
-            /> */
-            }
             <CustomTable data={applications} />
         </div>
     );

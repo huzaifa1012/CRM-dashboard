@@ -12,6 +12,7 @@ import UpdateUsers from "../pages/Users/UpdateUsers";
 import Orders from "../pages/NewOrders/Orders";
 import OrderHistory from "../pages/OrderHistory/OrderHistory";
 import Login from "../pages/Login/Login";
+import OTP from "../pages/OTP/Otp";
 import Applications from "../pages/Applications/Applicaiton";
 
 function Adminroutes() {
@@ -21,6 +22,7 @@ function Adminroutes() {
         <Routes>
           <Route path="/">
             <Route path="/" element={<Login />} />
+            <Route path="/verify" element={<OTP />} />
             <Route path="/dashboard" element={<Home />} />
 
             <Route path="categories">
