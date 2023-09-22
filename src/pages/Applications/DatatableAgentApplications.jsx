@@ -57,8 +57,8 @@ const DatatableAgentApplication = () => {
     }
     let agentMemberId = localStorage.getItem("id")
     console.log(agentMemberId)
-    // Function to handle updating the application data
-    const handleUpdateApplication = async (programId) => {
+
+    const handleUpdateApplication = async (applicationId, programId) => {
         const requestData = {
             ...programId && { programId },
             ...(firstName && { firstname: firstName }),
@@ -80,9 +80,10 @@ const DatatableAgentApplication = () => {
             ...(yearOfBirth && { yearOfBirth }),
             ...(address && { address }),
         };
-
+        console.log("applicationId", applicationId)
+        console.log("programId", programId)
         try {
-            const response = await axios.patch('https://studyapi.ieodkv.com/applications/update/6509505219805a3588311a80/650012da5c97b7265af36cd4',
+            const response = await axios.patch(`https://studyapi.ieodkv.com/applications/update/${applicationId},${agentId}`,
                 requestData
             )
 
@@ -132,7 +133,7 @@ const DatatableAgentApplication = () => {
         return (
             <div className="">
                 {/* bg-white shadow-md rounded-lg overflow-hidden */}
-                <table className="w-full" style={{ height: '900px' }}>
+                <table className="w-full">
                     <thead>
                         <tr className="bg-blue-500 text-white">
                             <th className="px-4 py-2 text-left">
@@ -155,6 +156,7 @@ const DatatableAgentApplication = () => {
                             <tr key={row._id} onClick={() => handleRowClick(row)}>
 
                                 <td className="px-4 py-2 text-left">
+
                                     <input
                                         type="checkbox"
                                         onChange={() => {
@@ -789,7 +791,7 @@ const DatatableAgentApplication = () => {
                                             )}
                                         </p>
                                         {isEditing ? (
-                                            <button onClick={() => handleUpdateApplication(ApplicationModalData.programId._id)}>Update Application</button>
+                                            <button onClick={() => handleUpdateApplication(ApplicationModalData._id, ApplicationModalData.programId._id)}>Update Application</button>
                                         ) : (
                                             <button onClick={() => setIsEditing(true)}>Edit Application</button>
                                         )}
