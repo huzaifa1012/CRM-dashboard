@@ -15,6 +15,7 @@ import Login from "../pages/Login/Login";
 import OTP from "../pages/OTP/Otp";
 import Applications from "../pages/Applications/Applicaiton";
 import AgentApplication from "../pages/Applications/AgentApplication";
+import ForgetePassword from "../pages/Login/Forget password ";
 
 const role = localStorage.getItem('role')
 
@@ -25,6 +26,7 @@ function Adminroutes() {
         <Routes>
           <Route path="/">
             <Route path="/" element={<Login />} />
+            <Route path="/forget-password" element={<ForgetePassword />} />
             <Route path="/verify" element={<OTP />} />
             <Route path="/dashboard" element={<Home />} />
 
