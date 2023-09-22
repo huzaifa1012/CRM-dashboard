@@ -13,6 +13,7 @@ const Sidebar = () => {
     navigate("/");
     window.location.reload();
   };
+  const role = localStorage.getItem('role')
 
   useEffect(() => {
     axios
@@ -57,6 +58,14 @@ const Sidebar = () => {
               <span>Applications</span>
             </li>
           </Link>
+          {role === 'Agent' ?
+            <Link to="/agent-applications" style={{ textDecoration: "none" }}>
+              <li>
+                <PersonOutlineIcon className="icon" />
+                <span>Agent Applications</span>
+              </li>
+            </Link>
+            : ""}
           <Link to="/core-settings" style={{ textDecoration: "none" }}>
             <li>
               <PersonOutlineIcon className="icon" />

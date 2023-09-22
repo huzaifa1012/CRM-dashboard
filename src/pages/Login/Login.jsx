@@ -17,7 +17,11 @@ const Login = () => {
         email: email,
         password: password
       })
-      console.log(response.data)
+      console.log("response", response.data)
+      const role = response.data.user.role.name
+      const id = response.data.user._id
+      localStorage.setItem('role', role)
+      localStorage.setItem('id', id)
       if (response.status === 200) {
         let token = response.data.token
         localStorage.setItem('token', token)

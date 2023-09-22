@@ -14,6 +14,9 @@ import OrderHistory from "../pages/OrderHistory/OrderHistory";
 import Login from "../pages/Login/Login";
 import OTP from "../pages/OTP/Otp";
 import Applications from "../pages/Applications/Applicaiton";
+import AgentApplication from "../pages/Applications/AgentApplication";
+
+const role = localStorage.getItem('role')
 
 function Adminroutes() {
   return (
@@ -36,6 +39,11 @@ function Adminroutes() {
             <Route path="/applications">
               <Route index element={<Applications />} />
             </Route>
+            {role === 'Agent' ?
+              <Route path="agent-applications">
+                <Route index element={<AgentApplication />} />
+              </Route>
+              : ""}
 
             <Route path="products">
               <Route index element={<Products />} />
