@@ -16,6 +16,7 @@ import OTP from "../pages/OTP/Otp";
 import Applications from "../pages/Applications/Applicaiton";
 import AgentApplication from "../pages/Applications/AgentApplication";
 import ForgetePassword from "../pages/Login/Forget password ";
+import Template from "../pages/template/Applicaiton";
 
 const role = localStorage.getItem('role')
 
@@ -47,6 +48,10 @@ function Adminroutes() {
               </Route>
               : ""}
 
+
+              <Route path="/template">
+              <Route index element={<Template />} />
+            </Route>
             <Route path="products">
               <Route index element={<Products />} />
               <Route

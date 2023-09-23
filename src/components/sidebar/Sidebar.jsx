@@ -72,6 +72,12 @@ const Sidebar = () => {
               <span>Core settings</span>
             </li>
           </Link>
+          <Link to="/template" style={{ textDecoration: "none" }}>
+            <li>
+              <PersonOutlineIcon className="icon" />
+              <span>Template</span>
+            </li>
+          </Link>
           <Link to="/users" style={{ textDecoration: "none" }}>
             <li>
               <PersonOutlineIcon className="icon" />
